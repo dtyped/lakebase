@@ -6,9 +6,10 @@ This repository is designed to help you to:
 - start with a clean, structured Python project layout
 - deploy using GitHub Actions
 - Use uv for fast dependency and environment management
+- Use metadata to achieve your ideal Lakebase setup.
 
 Think of it as a starting point — not a framework.
-Clone it, adapt it, ship from it.
+Clone it, adapt & enrich it, ship from it.
 
 # Project Structure
 ```
