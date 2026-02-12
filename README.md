@@ -26,6 +26,10 @@ lakebase/
 # Getting Started
 
 ```
+export DATABRICKS_HOST="<your Databricks workspace URL">
+export DATABRICKS_TOKEN="<your PAT token value>" # ideally use Service Principal authentication of course :)
+```
+```
 uv venv
 uv sync
 uv run lakebase-deploy --metadata metadata/dev.yml    
