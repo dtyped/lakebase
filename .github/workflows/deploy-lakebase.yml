@@ -1,0 +1,90 @@
+name: 'Deploy Lakebase'
+on:
+  push:
+    branches:
+      - 'feature/**'
+      - 'main'
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploy_dev:
+    runs-on: ubuntu-latest
+    environment: development
+    if: github.ref != 'refs/heads/main'
+    env: 
+      ENVIRONMENT: 'dev'
+      DATABRICKS_HOST: ${{ secrets.DTYPED_DATABRICKS_URL_DEV }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Read Python version 
+        run: |
+          PYTHON_VERSION=$(cut -d. -f1,2 < lakebase/.python-version)
+          echo "PYTHON_VERSION=$PYTHON_VERSION" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=$PYTHON_VERSION"
+      - name: Set Python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install uv
+        run: |
+          pip install uv
+      - name: Install lakebase package
+        working-directory: lakebase
+        run: uv sync
+      - id: azure-resource-login
+        uses: Azure/azure-resource-login-action@v1.0.0
+        with:
+          creds: '{"clientId":"${{ secrets.DATABRICKS_ID_DEV}}","clientSecret":"${{ secrets.DATABRICKS_SECRET_DEV }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+          resource-url: 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d
+      - name: Configure Databricks auth
+        run: |
+          echo "ARM_CLIENT_ID=${{ secrets.DATABRICKS_ID_DEV }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.DATABRICKS_SECRET_DEV }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
+      - name: Deploy Lakebase
+        working-directory: lakebase
+        run: |
+          uv run lakebase-deploy \
+            --metadata "$GITHUB_WORKSPACE/metadata/${ENVIRONMENT}.yml"
+  deploy_prd:
+    runs-on: ubuntu-latest
+    environment: development
+    if: github.ref != 'refs/heads/main'
+    env: 
+      ENVIRONMENT: 'dev'
+      DATABRICKS_HOST: ${{ secrets.DTYPED_DATABRICKS_URL_DEV }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Read Python version 
+        run: |
+          PYTHON_VERSION=$(cut -d. -f1,2 < lakebase/.python-version)
+          echo "PYTHON_VERSION=$PYTHON_VERSION" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=$PYTHON_VERSION"
+      - name: Set Python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install uv
+        run: |
+          pip install uv
+      - name: Install lakebase package
+        working-directory: lakebase
+        run: uv sync
+      - id: azure-resource-login
+        uses: Azure/azure-resource-login-action@v1.0.0
+        with:
+          creds: '{"clientId":"${{ secrets.DATABRICKS_ID_DEV}}","clientSecret":"${{ secrets.DATABRICKS_SECRET_DEV }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+          resource-url: 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d
+      - name: Configure Databricks auth
+        run: |
+          echo "ARM_CLIENT_ID=${{ secrets.DATABRICKS_ID_DEV }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.DATABRICKS_SECRET_DEV }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
+      - name: Deploy Lakebase
+        working-directory: lakebase
+        run: |
+          uv run lakebase-deploy \
+            --metadata "$GITHUB_WORKSPACE/metadata/${ENVIRONMENT}.yml"

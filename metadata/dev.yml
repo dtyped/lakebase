@@ -1,0 +1,5 @@
+lakebase:
+  project:
+    name: dtyped-lakebase-dev-project
+    display_name: dtyped-lakebase-dev-project
+    pg_version: "17"

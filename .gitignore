@@ -1,0 +1,4 @@
+.venv
+lakebase.egg-info
+uv.*
+__pycache__
