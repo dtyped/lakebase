@@ -54,7 +54,7 @@ jobs:
     if: github.ref != 'refs/heads/main'
     env: 
       ENVIRONMENT: 'dev'
-      DATABRICKS_HOST: ${{ secrets.DTYPED_DATABRICKS_URL_DEV }}
+      DATABRICKS_HOST: ${{ secrets.DTYPED_DATABRICKS_URL_PRD }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -76,12 +76,12 @@ jobs:
       - id: azure-resource-login
         uses: Azure/azure-resource-login-action@v1.0.0
         with:
-          creds: '{"clientId":"${{ secrets.DATABRICKS_ID_DEV}}","clientSecret":"${{ secrets.DATABRICKS_SECRET_DEV }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+          creds: '{"clientId":"${{ secrets.DATABRICKS_ID_PRD}}","clientSecret":"${{ secrets.DATABRICKS_SECRET_PRD }}","subscriptionId":"${{ secrets.SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
           resource-url: 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d
       - name: Configure Databricks auth
         run: |
-          echo "ARM_CLIENT_ID=${{ secrets.DATABRICKS_ID_DEV }}" >> $GITHUB_ENV
-          echo "ARM_CLIENT_SECRET=${{ secrets.DATABRICKS_SECRET_DEV }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_ID=${{ secrets.DATABRICKS_ID_PRD }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.DATABRICKS_SECRET_PRD }}" >> $GITHUB_ENV
           echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
       - name: Deploy Lakebase
         working-directory: lakebase
